@@ -1,5 +1,3 @@
-# proiect_tss
-# Rezumat: Testarea unitară în PHP cu PHPUnit – Aplicație NoteApp
 
 ## 1. Context
 Testarea unitară este o practică esențială în dezvoltarea aplicațiilor backend în PHP, contribuind la detectarea timpurie a erorilor, facilitarea refactorizării și îmbunătățirea arhitecturii.
