@@ -1,5 +1,5 @@
 
-    Testarea unitară este o practică esențială în dezvoltarea aplicațiilor backend în PHP, contribuind la detectarea timpurie a erorilor, facilitarea refactorizării și îmbunătățirea arhitecturii.
+Testarea unitară este o practică esențială în dezvoltarea aplicațiilor backend în PHP, contribuind la detectarea timpurie a erorilor, facilitarea refactorizării și îmbunătățirea arhitecturii.
 Este adesea utilizată în combinație cu TDD (Test Driven Development) și CI/CD (Continuous Integration/Continuous Delivery).
 
 ## 1. Definiții esențiale
