@@ -11,11 +11,11 @@ class NoteService {
         // verificare titlu duplicat
         foreach ($this->notes[$userId] as $note) {
             if ($note['title'] === $title) {
-                return "Titlu deja folosit."; // condiție simplă
+                return "Titlu deja folosit."; 
             }
         }
 
-        if (trim($title) === "" || trim($content) === "") { // condiție compusă
+        if (trim($title) === "" || trim($content) === "") { 
             return "Titlu și conținut obligatorii.";
         }
 
@@ -36,6 +36,19 @@ class NoteService {
             if ($note['title'] === $title) {
                 array_splice($this->notes[$userId], $index, 1);
                 return "Notiță ștearsă.";
+            }
+        }
+    
+        return "Notiță inexistentă.";
+    }
+    public function updateNote(string $userId, string $oldTitle, string $newTitle, string $newContent): string {
+        if (!isset($this->notes[$userId])) return "Utilizatorul nu are notițe.";
+    
+        foreach ($this->notes[$userId] as &$note) {
+            if ($note['title'] === $oldTitle) {
+                $note['title'] = $newTitle;
+                $note['content'] = $newContent;
+                return "Notiță actualizată.";
             }
         }
     
