@@ -25,6 +25,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $content = $_POST['content'] ?? '';
         $message = $noteService->createNote($userId, $title, $content);
 
+        // Adaugă etichete dacă există
         $tagsRaw = $_POST['tags'] ?? '';
         $tags = array_filter(array_map('trim', explode(',', $tagsRaw)));
         
@@ -62,6 +63,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $newContent = $_POST['new_content'];
         $message = $noteService->updateNote($userId, $oldTitle, $newTitle, $newContent);
     
+        // Actualizează etichetele noi adăugate
         $tagsRaw = $_POST['new_tags'] ?? '';
         $tags = array_filter(array_map('trim', explode(',', $tagsRaw)));
     
@@ -93,17 +95,20 @@ $notes = $noteService->getNotes($userId);
 
 <body>
     <div class="topbar">
-        <h1>Note App</h1>
-        <form method="POST" class="logout-form">
+    <img src="images/logo.png" alt="Note App Logo" style="height: 110px; margin-left: 125px; padding-bottom: 30px;">
+
+    <form method="POST" class="logout-form">
             <button type="submit" name="logout">Logout (<?= htmlspecialchars($userId) ?>)</button>
         </form>
     </div>
 
     <div class="container">
     <div class="sidebar">
+        <!-- Buton pentru deschiderea modalului -->
         <button type="button" onclick="openModal()" class="add-note-btn">Adaugă notiță</button>
 
-        <form method="POST" style="margin-bottom: 20px;">
+        <!-- Form: Filtrare -->
+        <form method="POST" style="margin-bottom: 20px; padding: 15px 20px;">
             <h2>Filtrare notițe</h2>
             Cuvânt cheie: <input type="text" name="keyword"><br>
             <button name="filter" type="submit">Filtrează</button>
@@ -113,11 +118,12 @@ $notes = $noteService->getNotes($userId);
     </div>
 
     <div class="notes">
+        <!-- Modal pentru adăugare notiță -->
         <div id="noteModal" class="modal">
         <div class="modal-content">
             <span class="close" onclick="closeModal()">&times;</span>
-            <form method="POST">
-                <h2>Adaugă notiță</h2>
+            <form method="POST" style="box-shadow: none; margin-left: 15px;">
+                <h2 style="padding-left: 0px;">Adaugă notiță</h2>
                 Titlu: <input type="text" name="title" required><br>
                 Conținut: <textarea name="content" required></textarea><br>
                 Etichete (separate prin virgulă): <input type="text" name="tags"><br>
@@ -146,7 +152,7 @@ $notes = $noteService->getNotes($userId);
                 echo "</div>";
             }
         
-            echo "</div>"; 
+            echo "</div>"; // end note-title
             echo "<div class='note-content'>" . nl2br(htmlspecialchars($note['content'])) . "</div>";
         
             echo "<div class='note-actions'>";
@@ -159,10 +165,11 @@ $notes = $noteService->getNotes($userId);
         ?>
     </div>
 </div>
+<!-- Modal editare -->
 <div id="editModal" class="modal">
   <div class="modal-content">
     <span class="close" onclick="closeEditModal()">&times;</span>
-    <form method="POST">
+    <form method="POST" style="box-shadow: none; margin-left: 15px;">
         <h2>Editează notiță</h2>
         <input type="hidden" name="old_title" id="edit-old-title">
         Titlu: <input type="text" name="new_title" id="edit-title" required><br>
@@ -172,17 +179,20 @@ $notes = $noteService->getNotes($userId);
     </form>
   </div>
 </div>
+<!-- Modal pentru mesaje de notificare -->
 <div id="messageModal" class="modal">
   <div class="modal-content">
     <span class="close" onclick="closeMessageModal()">&times;</span>
     <p id="messageContent"></p>
   </div>
 </div>
+<!-- Formular ascuns pentru ștergere -->
 <form id="deleteForm" method="POST" style="display: none;">
     <input type="hidden" name="delete_title" id="deleteTitleInput">
     <input type="hidden" name="delete" value="1">
 </form>
 
+<!-- Modal confirmare ștergere -->
 <div id="confirmDeleteModal" class="modal">
   <div class="modal-content">
     <p>Ești sigur că vrei să ștergi această notiță?</p>
@@ -228,6 +238,7 @@ function closeMessageModal() {
     document.getElementById("messageModal").style.display = "none";
 }
 
+// Închide dacă se face clic pe fundal
 window.addEventListener("click", function(event) {
     const modal = document.getElementById("messageModal");
     if (event.target === modal) {
