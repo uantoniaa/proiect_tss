@@ -52,7 +52,8 @@ Testarea unitară cu PHPUnit este potrivită și accesibilă chiar și pentru ap
 - **Test folosit**: `testFilterByKeywordAndDate`
  
 #### Studiu de caz 4 – Adăugarea unei etichete la o notiță existentă
-- **Scenariu**: Utilizatorul `u1` dorește să adauge eticheta `important` la notița `Note1`.
+- **Scenariu**: Utilizatorul `u1` dorește să adauge o etichetă (ex: `important`) la notița intitulată `Note1`.
+- **Precondiții**: Notița `Note1` există deja pentru utilizatorul `u1`
 - **Input**: `userId = u1`, `noteTitle = Note1`, `tag = important`
 - **Output așteptat**: `Etichetă adăugată cu succes.`
 - **Test folosit**: `testAddTagSuccess`
@@ -63,16 +64,16 @@ Testarea unitară cu PHPUnit este potrivită și accesibilă chiar și pentru ap
  
 #### Căutare în conținut: `stripos()` vs `strpos()`
 - **Alternativă**: `strpos()` – căutare case-sensitive
-- **Decizie**: `stripos()` permite căutarea fără diferențiere între litere mari/mici
-- **Impact**: îmbunătățește accesibilitatea și experiența utilizatorului
+- **Decizie**: `stripos()` permite utilizatorului să caute fără diferențiere între litere mari/mici
+- **Impact**: îmbunătățește accesibilitatea și experiența de utilizare
  
-#### Procesarea etichetelor: `array_map` + `array_filter` vs `foreach`
+#### Procesarea etichetelor: `array_map()` și `array_filter()` vs `foreach`
 - **Alternativă**: buclă clasică `foreach`
-- **Avantaj**: cod mai scurt, mai expresiv și mai ușor de întreținut
+- **Avantaj actual**: expresivitate mai mare, cod mai concis și ușor de întreținut
  
 #### Persistență: fișiere `.json` vs baze de date
-- **Alegere actuală**: salvare în fișiere JSON pentru simplitate
-- **Limitări**: nu este scalabil pentru mulți utilizatori
+- **Alegere actuală**: JSON pentru simplitate și acces rapid
+- **Limitare**: nu este scalabil pentru mulți utilizatori sau volume mari de date
 - **Posibilă extindere**: integrare cu SQLite sau MySQL pentru persistență robustă
  
 ---
@@ -80,21 +81,35 @@ Testarea unitară cu PHPUnit este potrivită și accesibilă chiar și pentru ap
 ### Analize aprofundate
  
 #### Acoperirea testelor
-- Testele unitare acoperă metodele din `NoteService`, `FilterService`, `TagService`, `AuthService`
-- Sunt testate cazuri pozitive, negative și de margine
+- Testele unitare acoperă toate metodele din clasele: `NoteService`, `FilterService`, `TagService`, `AuthService`
+- Sunt verificate cazuri pozitive, negative și de margine
  
 #### Limitări identificate
-- `updateNote()` nu verifică dacă noul titlu este deja folosit
-- Fișierele `.json` pot deveni inconsistente dacă două procese scriu simultan
-- Nu există o sesiune cu expirare pentru autentificare
+- Funcția `updateNote()` nu validează dacă noul titlu este deja folosit → posibilitate de suprascriere accidentală
+- Fișierele `notes.json` și `tags.json` pot deveni inconsistente dacă două procese scriu simultan
+- Lipsa unei metode de autentificare cu sesiune expirabilă
  
 #### Posibile îmbunătățiri
 - Introducerea unui sistem de logare a modificărilor
-- Adăugarea unui câmp `timestamp` în fiecare notiță
-- Integrarea cu GitHub Actions sau alt CI pentru testare automată
+- Adăugarea unui câmp `timestamp` în notițe pentru sortare și filtrare avansată
+- Migrarea testelor către un framework CI (ex: GitHub Actions) pentru rulare automată
+ 
+---
+ 
+### Observații privind testarea
+ 
+#### Testarea funcțională acoperă:
+- Cazuri valide și invalide pentru utilizator
+- Verificarea mesajelor de răspuns din metodele serviciilor
+ 
+#### Testarea structurală acoperă:
+- Toate ramurile logice din `FilterService::filterNotes`
+- Acoperire completă a tuturor condiționalelor (`if`, `else`) și instrucțiunilor repetitve (`foreach`)
  
 ---
  
 ### Concluzie
  
-Proiectul se află într-o versiune intermediară stabilă (beta-beta). Testele unitare sunt bine structurate și acoperă corectitudinea logicii aplicației. Arhitectura modulară permite extinderea cu funcționalități suplimentare și integrarea cu tehnologii moderne.
+Proiectul se află într-o stare intermediară stabilă (versiune „beta-beta”).  
+Testele unitare sunt bine structurate, acoperă logica critică și demonstrează atât corectitudinea codului, cât și robustețea funcțională a aplicației.  
+Arhitectura modulară permite extinderea ușoară și integrarea cu tehnologii moderne pentru persistență, autentificare și testare automată.
