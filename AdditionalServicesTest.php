@@ -9,21 +9,21 @@ class AdditionalServicesTest extends TestCase {
     public function testAddTagSuccess() {
         $tagService = new TagService();
         $result = $tagService->addTag("u1", "Note1", "important");
-        $this->assertEquals("Eticheta adaugata cu succes.", $result);
+        $this->assertEquals("Etichetă adăugată cu succes.", $result);
     }
 
     public function testAddDuplicateTag() {
         $tagService = new TagService();
         $tagService->addTag("u1", "Note1", "urgent");
         $result = $tagService->addTag("u1", "Note1", "urgent");
-        $this->assertEquals("Eticheta deja adaugata.", $result);
+        $this->assertEquals("Etichetă deja adăugată.", $result);
     }
 
     public function testRemoveTagSuccess() {
         $tagService = new TagService();
         $tagService->addTag("u1", "Note1", "study");
         $result = $tagService->removeTag("u1", "Note1", "study");
-        $this->assertEquals("Eticheta eliminata.", $result);
+        $this->assertEquals("Etichetă eliminată.", $result);
     }
 
     public function testFilterNotesByTag() {
@@ -39,7 +39,7 @@ class AdditionalServicesTest extends TestCase {
     public function testRegisterAndAuthenticate() {
         $authService = new AuthService();
         $result = $authService->register("alice", "1234");
-        $this->assertEquals("Inregistrare cu succes.", $result);
+        $this->assertEquals("Înregistrare cu succes.", $result);
         $this->assertTrue($authService->authenticate("alice", "1234"));
     }
 
@@ -48,4 +48,29 @@ class AdditionalServicesTest extends TestCase {
         $authService->register("bob", "secret");
         $this->assertFalse($authService->authenticate("bob", "wrongpass"));
     }
+    public function testFilterKeywordNoMatch() {
+        $filter = new FilterService();
+        $notes = [['content' => 'nothing useful']];
+        $result = $filter->filterNotes($notes, 'missing');
+        $this->assertEmpty($result);
+    }
+    
+    public function testFilterWithDateButNoteHasNoDate() {
+        $filter = new FilterService();
+        $notes = [['content' => 'testing']];
+        $result = $filter->filterNotes($notes, 'testing', '2024-01-01');
+        $this->assertEmpty($result); // note has no 'date'
+    }
+public function testGetTagsEmpty() {
+    $tagService = new TagService();
+    $tags = $tagService->getTags("user", "note");
+    $this->assertEquals([], $tags);
+}
+
+public function testGetNotesEmpty() {
+    $noteService = new NoteService();
+    $notes = $noteService->getNotes("nouser");
+    $this->assertEquals([], $notes);
+}
+    
 }
