@@ -2,18 +2,24 @@
 require_once 'NoteService.php';
 require_once 'FilterService.php';
 require_once 'TagService.php';
+require_once 'AuthService.php';
 
 session_start();
-$userId = "demo_user";
+if (!isset($_SESSION['userId'])) {
+    header("Location: login.php");
+    exit;
+}
 
-$noteService = $_SESSION['noteService'] ?? new NoteService();
-$filterService = $_SESSION['filterService'] ?? new FilterService();
-$tagService = $_SESSION['tagService'] ?? new TagService();
+$userId = $_SESSION['userId'];
+$noteService = new NoteService();
+$filterService = new FilterService();
+$tagService = new TagService();
 
 $message = null;
 $filteredNotes = null;
 
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
+    
     if (isset($_POST['create'])) {
         $title = $_POST['title'] ?? '';
         $content = $_POST['content'] ?? '';
@@ -68,13 +74,13 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $tag = $_POST['tag_value'];
         $message = $tagService->removeTag($userId, $title, $tag);
     }
+    elseif (isset($_POST['logout'])) {
+        session_destroy();
+        header("Location: login.php");
+        exit;
+    }
     
 }
-
-$_SESSION['noteService'] = $noteService;
-$_SESSION['filterService'] = $filterService;
-$_SESSION['tagService'] = $tagService;
-
 $notes = $noteService->getNotes($userId);
 ?>
 
@@ -86,36 +92,27 @@ $notes = $noteService->getNotes($userId);
 </head>
 
 <body>
-    <h1>NoteApp</h1>
-
-    <?php if ($message) echo "<p><strong>$message</strong></p>"; ?>
-
-    <div class="container">
-    <div class="sidebar">
-
-        <button type="button" onclick="openModal()" class="add-note-btn">Adaugă notiță</button>
-
-
-        <form method="POST">
-            <h2>Șterge notiță</h2>
-            Selectează notița:
-            <select name="delete_title" required>
-                <?php foreach ($notes as $note): ?>
-                    <option value="<?= htmlspecialchars($note['title']) ?>"><?= htmlspecialchars($note['title']) ?></option>
-                <?php endforeach; ?>
-            </select><br>
-            <button name="delete" type="submit">Șterge</button>
-        </form>
-
-        <form method="POST">
-            <h2>Filtrare notițe</h2>
-            Cuvânt cheie: <input type="text" name="keyword"><br>
-            <button name="filter" type="submit">Filtrează</button>
+    <div class="topbar">
+        <h1>Note App</h1>
+        <form method="POST" class="logout-form">
+            <button type="submit" name="logout">Logout (<?= htmlspecialchars($userId) ?>)</button>
         </form>
     </div>
 
+    <div class="container">
+    <div class="sidebar">
+        <button type="button" onclick="openModal()" class="add-note-btn">Adaugă notiță</button>
+
+        <form method="POST" style="margin-bottom: 20px;">
+            <h2>Filtrare notițe</h2>
+            Cuvânt cheie: <input type="text" name="keyword"><br>
+            <button name="filter" type="submit">Filtrează</button>
+            <button name="filter" type="submit" onclick="this.form.keyword.value='';">Afișează tot</button>
+        </form>
+
+    </div>
+
     <div class="notes">
-  
         <div id="noteModal" class="modal">
         <div class="modal-content">
             <span class="close" onclick="closeModal()">&times;</span>
@@ -149,13 +146,14 @@ $notes = $noteService->getNotes($userId);
                 echo "</div>";
             }
         
-            echo "</div>";
+            echo "</div>"; 
             echo "<div class='note-content'>" . nl2br(htmlspecialchars($note['content'])) . "</div>";
         
-    
+            echo "<div class='note-actions'>";
             echo "<button class='edit-btn' onclick='openEditModal(" . json_encode($note['title']) . ", " . json_encode($note['content']) . ")'>Editează</button>";
-            
+            echo "<button class='delete-btn' onclick='confirmDelete(" . json_encode($note['title']) . ")'>Șterge</button>";
             echo "</div>";
+            echo "</div>"; 
         }
         
         ?>
@@ -172,6 +170,24 @@ $notes = $noteService->getNotes($userId);
         Etichete noi (virgulă): <input type="text" name="new_tags"><br>
         <button name="update" type="submit">Actualizează</button>
     </form>
+  </div>
+</div>
+<div id="messageModal" class="modal">
+  <div class="modal-content">
+    <span class="close" onclick="closeMessageModal()">&times;</span>
+    <p id="messageContent"></p>
+  </div>
+</div>
+<form id="deleteForm" method="POST" style="display: none;">
+    <input type="hidden" name="delete_title" id="deleteTitleInput">
+    <input type="hidden" name="delete" value="1">
+</form>
+
+<div id="confirmDeleteModal" class="modal">
+  <div class="modal-content">
+    <p>Ești sigur că vrei să ștergi această notiță?</p>
+    <button onclick="submitDelete()">Da, șterge</button>
+    <button onclick="closeDeleteModal()">Anulează</button>
   </div>
 </div>
 
@@ -201,7 +217,46 @@ window.onclick = function(event) {
     if (event.target === modal1) modal1.style.display = "none";
     if (event.target === modal2) modal2.style.display = "none";
 }
+function showMessage(message) {
+    const modal = document.getElementById("messageModal");
+    const content = document.getElementById("messageContent");
+    content.textContent = message;
+    modal.style.display = "block";
+}
+
+function closeMessageModal() {
+    document.getElementById("messageModal").style.display = "none";
+}
+
+window.addEventListener("click", function(event) {
+    const modal = document.getElementById("messageModal");
+    if (event.target === modal) {
+        modal.style.display = "none";
+    }
+});
+let noteToDelete = null;
+
+function confirmDelete(title) {
+    noteToDelete = title;
+    document.getElementById("confirmDeleteModal").style.display = "block";
+}
+
+function closeDeleteModal() {
+    document.getElementById("confirmDeleteModal").style.display = "none";
+    noteToDelete = null;
+}
+
+function submitDelete() {
+    document.getElementById("deleteTitleInput").value = noteToDelete;
+    document.getElementById("deleteForm").submit();
+}
+
 </script>
+<?php if ($message): ?>
+<script>
+    showMessage(<?= json_encode($message) ?>);
+</script>
+<?php endif; ?>
 
 
 </body>
