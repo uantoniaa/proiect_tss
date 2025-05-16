@@ -12,7 +12,7 @@ h1 {
 
 form, .note {
     background: white;
-    padding: 15px 20px;
+    
     margin: 20px auto;
     border-radius: 8px;
     max-width: 600px;
@@ -25,7 +25,7 @@ form h2 {
 }
 
 input[type="text"], textarea, select {
-    width: 100%;
+    width: 94%;
     padding: 8px;
     margin-top: 6px;
     margin-bottom: 12px;
@@ -268,7 +268,7 @@ button[name="filter"]:last-of-type {
     border: none;
     border-radius: 5px;
     cursor: pointer;
-    width: 100%;
+    width: 98%;
     margin-top: 10px;
 }
 
