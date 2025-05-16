@@ -107,9 +107,32 @@ Testarea unitară cu PHPUnit este potrivită și accesibilă chiar și pentru ap
 - Acoperire completă a tuturor condiționalelor (`if`, `else`) și instrucțiunilor repetitve (`foreach`)
  
 ---
- 
-### Concluzie
- 
-Proiectul se află într-o stare intermediară stabilă (versiune „beta-beta”).  
-Testele unitare sunt bine structurate, acoperă logica critică și demonstrează atât corectitudinea codului, cât și robustețea funcțională a aplicației.  
-Arhitectura modulară permite extinderea ușoară și integrarea cu tehnologii moderne pentru persistență, autentificare și testare automată.
+
+# Partea 3/3
+
+## ⚙️ Configurație Tehnică
+
+| Componentă         | Valoare                          |
+|--------------------|----------------------------------|
+| Limbaj             | PHP 8.2.28                       |
+| Framework testare  | PHPUnit 11.5.20                  |
+| Debugging Tool     | Xdebug v3.4.3                    |
+| Mediu rulare       | VSCode         |
+| Mașină virtuală    | ❌ Nu a fost utilizată           |
+
+# 📊 Evaluarea unui Instrument AI pentru Generarea Testelor Software
+
+## 🧪 4. Comparație între testele proprii și cele autogenerate
+
+| **Criteriu**                     | **Teste proprii**                         | **Teste generate AI**                                   |
+|----------------------------------|-------------------------------------------|----------------------------------------------------------|
+| Număr de cazuri acoperite        | 4 cazuri (de bază)                        | 6 cazuri (acoperire completă + persistență)             |
+| Persistență între instanțe       | ❌ Nu este testată                        | ✅ Testată explicit                                      |
+| Gestionare fișier JSON           | ❌ Implicit în testele reale              | ✅ Separat, cu fișier de test dedicat                    |
+| Izolare între teste              | ❌ Nu există (același fișier users.json)  | ✅ Cu fișier temporar `test_users.json`                  |
+| Verificare efecte secundare      | ❌ Doar prin metode                       | ✅ Verifică fișierul scris și conținutul său             |
+| Claritate și structură           | ✅ Simplu și clar                         | ✅ Mai complet, dar mai complex structural               |
+
+
+
+
