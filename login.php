@@ -23,7 +23,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <html>
 <head>
     <title>Login</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="../style.css">
 </head>
 <body>
     <div class="auth-container">
@@ -31,11 +31,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <?php if ($message): ?>
             <p class="message"><?= htmlspecialchars($message) ?></p>
         <?php endif; ?>
-        <form method="POST">
+        <form method="POST" style="box-shadow: none;">
             <input type="text" name="username" placeholder="Utilizator" required><br>
             <input type="password" name="password" placeholder="Parolă" required><br>
             <button type="submit">Autentificare</button>
-            <p>Nu ai cont? <a href="register.php">Înregistrează-te</a></p>
+            <p>Nu ai cont? <a href="/src/register.php">Înregistrează-te</a></p>
         </form>
     </div>
 </body>
